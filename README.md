@@ -1,9 +1,6 @@
 # 🕵️‍♂️ StegHunter Pro: AI-Powered Steganalysis Suite
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/Deep Learning-PyTorch-ee4c2c)](https://pytorch.org/)
-[![GUI](https://img.shields.io/badge/GUI-PySide6%20%7C%20Streamlit-green)](https://pyside6.gs)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**Python 3.10+ | PyTorch | PySide6 | Streamlit | MIT License**
 
 **StegHunter Pro** is a professional-grade digital forensics framework designed for the detection, analysis, and extraction of hidden data (steganography) within digital images. By integrating traditional statistical analysis with modern Deep Learning, StegHunter provides a multi-layered defense against common and advanced data-hiding techniques.
 
