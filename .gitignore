@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+env/
+venv/
+steg_hunter_env/
+ENV/
+env.bak/
+venv.bak/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.vagrant/
+
+# pytest
+.pytest_cache/
+**/.pytest_cache/
+
+# Project specific
+models/*.pkl
+*.log
+*.db
+
+# Large model files
+test_models/
+*.h5
+
+# Generated outputs
+heatmap_*.png
+temp_heatmap*.png
+temp_*.png
+report_*.pdf
+
+# Test data
+test_data/
+test_images/
+data/stego_samples/
+data/training/
+hybrid_test_results.json
+dataset/
+seeds/
+
+# IDE artifacts
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+*.sublime-project
+Minor_Project_Report_Shubham.pdf
