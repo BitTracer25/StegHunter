@@ -2,32 +2,14 @@ import os
 import random
 import string
 from PIL import Image
+from stego.lsb import embed_text
 
 def hide_random_data(image_path, output_path):
     """Hides a random string of data in an image to create a stego sample."""
-    img = Image.open(image_path).convert('RGB')
-    pixels = img.load()
-    
     # Generate a random string of random length
     length = random.randint(10, 500)
     random_text = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-    binary_msg = ''.join(format(ord(i), '08b') for i in random_text)
-    
-    width, height = img.size
-    msg_index = 0
-    
-    for y in range(height):
-        for x in range(width):
-            r, g, b = pixels[x, y]
-            channels = [r, g, b]
-            for i in range(3):
-                if msg_index < len(binary_msg):
-                    channels[i] = (channels[i] & ~1) | int(binary_msg[msg_index])
-                    msg_index += 1
-            pixels[x, y] = tuple(channels)
-            if msg_index >= len(binary_msg):
-                img.save(output_path)
-                return
+    embed_text(image_path, random_text, output_path)
 
 def build_dataset(seed_folder, samples_per_image=10):
     """Creates a dataset of clean and stego images."""

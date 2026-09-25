@@ -28,6 +28,31 @@ class AnalysisWorker(QThread):
         except Exception as e:
             self.error.emit(str(e))
 
+
+class BatchWorker(QThread):
+    """Scan a directory without blocking the desktop event loop."""
+    finished = Signal(list)
+    error = Signal(str)
+
+    def __init__(self, folder):
+        super().__init__()
+        self.folder = folder
+
+    def run(self):
+        results = []
+        try:
+            filenames = sorted(
+                name for name in os.listdir(self.folder)
+                if name.lower().endswith((".png", ".jpg", ".jpeg"))
+            )
+            for filename in filenames:
+                path = os.path.join(self.folder, filename)
+                result = StegHunter(path).run_full_analysis()
+                results.append((filename, result))
+            self.finished.emit(results)
+        except Exception as error:
+            self.error.emit(str(error))
+
 # --- MAIN WINDOW ---
 class StegHunterPro(QMainWindow):
     def __init__(self):
@@ -115,7 +140,7 @@ class StegHunterPro(QMainWindow):
         self.lsb_output.setReadOnly(True)
         self.lsb_output.setPlaceholderText("LSB extracted data will appear here...")
 
-        layout.addWidget(QLabel("Detection Probability:", alignment=Qt.AlignCenter))
+        layout.addWidget(QLabel("Detection Score:", alignment=Qt.AlignCenter))
         layout.addWidget(self.prob_label)
         layout.addWidget(QLabel("Extracted LSB Message:"))
         layout.addWidget(self.lsb_output)
@@ -169,10 +194,14 @@ class StegHunterPro(QMainWindow):
     @Slot(dict)
     def update_ui(self, results):
         self.progress.hide()
-        self.status_label.setText("Analysis Complete.")
+        available = ", ".join(name.replace("_", " ").title() for name in results.get("model_scores", {}))
+        status = f"Analysis Complete. Models: {available or 'none'}"
+        if results.get("model_errors"):
+            status += f". Issues: {results['model_errors']}"
+        self.status_label.setText(status)
         
         # Update AI Tab
-        self.prob_label.setText(f"{results['probability']*100:.2f}%")
+        self.prob_label.setText(f"{results['combined_score']*100:.2f}%")
         self.lsb_output.setText(results['lsb_data'] or "No data found.")
         
         # Update Forensics Tab
@@ -201,22 +230,35 @@ class StegHunterPro(QMainWindow):
     def batch_scan(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Folder to Scan")
         if not folder: return
-        
+
         self.batch_table.setRowCount(0)
-        files = [f for f in os.listdir(folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
-        
-        for f in files:
-            path = os.path.join(folder, f)
-            hunter = StegHunter(path)
-            res = hunter.run_full_analysis()
-            
+        self.status_label.setText("Scanning folder...")
+        self.progress.show()
+        self.batch_worker = BatchWorker(folder)
+        self.batch_worker.finished.connect(self.show_batch_results)
+        self.batch_worker.error.connect(self.show_batch_error)
+        self.batch_worker.start()
+
+    @Slot(list)
+    def show_batch_results(self, results):
+        self.progress.hide()
+        self.status_label.setText(f"Batch scan complete: {len(results)} images.")
+        for filename, res in results:
             row = self.batch_table.rowCount()
             self.batch_table.insertRow(row)
-            self.batch_table.setItem(row, 0, QTableWidgetItem(f))
+            self.batch_table.setItem(row, 0, QTableWidgetItem(filename))
+            if not res:
+                self.batch_table.setItem(row, 1, QTableWidgetItem("Analysis failed"))
+                self.batch_table.setItem(row, 2, QTableWidgetItem("Error"))
+                continue
             self.batch_table.setItem(row, 1, QTableWidgetItem(f"{res['probability']*100:.2f}%"))
-            
             status = "⚠️ Suspect" if res['probability'] > 0.5 else "✅ Clean"
             self.batch_table.setItem(row, 2, QTableWidgetItem(status))
+
+    @Slot(str)
+    def show_batch_error(self, error):
+        self.progress.hide()
+        self.status_label.setText(f"Batch scan failed: {error}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

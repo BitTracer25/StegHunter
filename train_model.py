@@ -1,9 +1,10 @@
 import os
+import re
 import numpy as np
 import pandas as pd
 from PIL import Image
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GroupShuffleSplit
 from sklearn.metrics import accuracy_score
 import joblib
 
@@ -37,17 +38,30 @@ def get_chi_square(image_path):
 
 def prepare_dataset():
     data = []
+    groups = []
     for label, folder in [(0, "dataset/clean"), (1, "dataset/stego")]:
+        if not os.path.isdir(folder):
+            raise FileNotFoundError(f"Training folder not found: {folder}")
         for img_name in os.listdir(folder):
             path = os.path.join(folder, img_name)
+            if not os.path.isfile(path):
+                continue
             data.append([get_chi_square(path), calculate_entropy(path), label])
-    return pd.DataFrame(data, columns=['chi_square', 'entropy', 'label'])
+            # Generated variants from the same seed image share a group, avoiding
+            # near-duplicate images leaking into both train and validation sets.
+            groups.append(re.sub(r"_\d+$", "", os.path.splitext(img_name)[0]))
+    if not data:
+        raise ValueError("No training images found in dataset/clean and dataset/stego")
+    return pd.DataFrame(data, columns=['chi_square', 'entropy', 'label']), np.asarray(groups)
 
 if __name__ == "__main__":
-    df = prepare_dataset()
+    df, groups = prepare_dataset()
     X = df[['chi_square', 'entropy']]
     y = df['label']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    splitter = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+    train_idx, test_idx = next(splitter.split(X, y, groups))
+    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
     model = RandomForestClassifier(n_estimators=100)
     model.fit(X_train, y_train)
     print(f"[+] Accuracy: {accuracy_score(y_test, model.predict(X_test)) * 100:.2f}%")

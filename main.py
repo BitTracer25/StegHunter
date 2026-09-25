@@ -15,7 +15,11 @@ def main():
     
     if results:
         # 1. Probability
-        print(f"[*] Probability of hidden data: {results['probability']*100:.2f}%")
+        print(f"[*] Combined model score (mean): {results['combined_score']*100:.2f}%")
+        for model_name, score in results.get("model_scores", {}).items():
+            print(f"[*] {model_name.replace('_', ' ').title()} score: {score*100:.2f}%")
+        if results.get("model_errors"):
+            print(f"[!] Model loading/inference issues: {results['model_errors']}")
         
         # 2. LSB Results
         if results['lsb_data']:

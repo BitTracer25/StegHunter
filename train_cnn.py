@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
-from torchvision import transforms
+import numpy as np
 from PIL import Image
 import os
 
@@ -49,18 +49,16 @@ class StegoDataset(Dataset):
                 self.images.append(os.path.join(folder_path, img_name))
                 self.labels.append(label)
 
-        self.transform = transforms.Compose([
-            transforms.Resize((128, 128)), # Standardize size for CNN
-            transforms.ToTensor(),
-        ])
-
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
         img = Image.open(self.images[idx]).convert('RGB')
         label = torch.tensor([self.labels[idx]], dtype=torch.float32)
-        return self.transform(img), label
+        img = img.resize((128, 128))
+        pixels = np.asarray(img, dtype=np.float32) / 255.0
+        tensor = torch.from_numpy(pixels).permute(2, 0, 1)
+        return tensor, label
 
 # --- 3. TRAINING LOOP ---
 def train():

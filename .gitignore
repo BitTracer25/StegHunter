@@ -7,9 +7,10 @@ __pycache__/
 *.pyd
 *.so
 .Python
-build/
+build*/
 develop-eggs/
-dist/
+dist*/
+installer/
 downloads/
 eggs/
 .eggs/
@@ -30,6 +31,7 @@ steg_hunter_env/
 ENV/
 env.bak/
 venv.bak/
+win_venv/
 
 # VS Code
 .vscode/
