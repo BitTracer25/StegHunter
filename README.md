@@ -88,9 +88,7 @@ The CNN in `train_cnn.py` is trained on 128 × 128 RGB images and loaded from `s
 
 ### Prerequisites
 
-- **Python 3.10+**
-- **WSL2 (Windows Subsystem for Linux)** is highly recommended for the Desktop App.
-- **GUI Server:** Windows 11 (WSLg) or VcXsrv (Windows 10).
+- **Python 3.10+** to run the source code. The Windows desktop app runs natively and does not require WSL or a separate GUI server.
 
 ### Installation Steps
 
