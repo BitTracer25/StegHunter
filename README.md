@@ -88,7 +88,7 @@ The CNN in `train_cnn.py` is trained on 128 × 128 RGB images and loaded from `s
 
 ### Prerequisites
 
-- **Python 3.10+** to run the source code. The Windows desktop app runs natively and does not require WSL or a separate GUI server.
+- **Python 3.10+** to run the source code on Windows or Linux. The desktop app runs natively on either operating system; a native Linux desktop does not need WSL or a separate GUI server.
 
 ### Installation Steps
 
@@ -104,6 +104,30 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 ```
+
+### Run the desktop app natively on Linux
+
+Build and run the Linux version from a Linux desktop or Linux virtual machine. PyInstaller does not cross-compile between operating systems, and Linux builds depend on the target system's glibc, so build on the oldest Linux distribution you intend to support.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[desktop]"
+python desktop_app.py
+```
+
+### Build a Linux desktop bundle
+
+Install PyInstaller in the active Linux environment and build the existing spec on Linux:
+
+```bash
+python -m pip install pyinstaller
+python -m PyInstaller --clean --noconfirm --distpath dist_linux --workpath build_linux StegHunter_Pro.spec
+./dist_linux/StegHunter_Pro/StegHunter_Pro
+```
+
+This creates a Linux-specific folder bundle. Create the final Linux installer or portable package from that bundle using the chosen Linux packaging format; the Windows Inno Setup installer cannot package a Linux executable.
 
 ---
 
