@@ -122,11 +122,12 @@ python desktop_app.py
 Build on a Linux desktop or VM. PyInstaller does not cross-compile, and the output depends on the Linux system libraries available on the build machine. The script creates a portable `.tar.gz` bundle and a Debian `.deb` installer (for Debian, Ubuntu, and compatible distributions):
 
 ```bash
+python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
 python -m pip install -e ".[linux-build]"
 bash packaging/linux/build.sh
 ```
 
-The `.deb` installs StegHunter Pro under `/opt/steg-hunter-pro` and adds it to the desktop application menu. The portable archive contains the standalone app folder; launch `StegHunter_Pro` inside it. Output files are written to `dist_linux/`. Linux desktop support uses the existing PySide6 app; the Windows Inno Setup installer remains Windows-only.
+Install the CPU-only PyTorch wheel before the project extras so PyInstaller bundles the smaller CPU runtime; the CNN model remains enabled and runs inference on CPU. The build script stops if it detects CUDA-enabled PyTorch. This can greatly reduce package size, though the exact result varies with Python, PyTorch, and PyInstaller versions and must be checked after building against your 700 MB target. The `.deb` installs StegHunter Pro under `/opt/steg-hunter-pro` and adds it to the desktop application menu. The portable archive contains the standalone app folder; launch `StegHunter_Pro` inside it. Output files are written to `dist_linux/`. Linux desktop support uses the existing PySide6 app; the Windows Inno Setup installer remains Windows-only.
 
 ---
 

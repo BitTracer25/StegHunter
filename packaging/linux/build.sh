@@ -18,6 +18,17 @@ if ! command -v pyinstaller >/dev/null 2>&1; then
   echo "PyInstaller is missing. Install with: python -m pip install -e '.[linux-build]'" >&2
   exit 1
 fi
+if ! python -c 'import torch' >/dev/null 2>&1; then
+  echo "PyTorch is missing. Install the CPU build with: python -m pip install --index-url https://download.pytorch.org/whl/cpu torch" >&2
+  exit 1
+fi
+if python -c 'import torch; raise SystemExit(torch.version.cuda is not None)'; then
+  :
+else
+  echo "This package includes CUDA-enabled PyTorch and may exceed the size target." >&2
+  echo "Replace it with the CPU build: python -m pip install --force-reinstall --index-url https://download.pytorch.org/whl/cpu torch" >&2
+  exit 1
+fi
 
 cd "$ROOT_DIR"
 mkdir -p "$DIST_DIR" "$WORK_DIR"
