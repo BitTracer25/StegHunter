@@ -117,17 +117,16 @@ python -m pip install -e ".[desktop]"
 python desktop_app.py
 ```
 
-### Build a Linux desktop bundle
+### Build Linux desktop packages
 
-Install PyInstaller in the active Linux environment and build the existing spec on Linux:
+Build on a Linux desktop or VM. PyInstaller does not cross-compile, and the output depends on the Linux system libraries available on the build machine. The script creates a portable `.tar.gz` bundle and a Debian `.deb` installer (for Debian, Ubuntu, and compatible distributions):
 
 ```bash
-python -m pip install pyinstaller
-python -m PyInstaller --clean --noconfirm --distpath dist_linux --workpath build_linux StegHunter_Pro.spec
-./dist_linux/StegHunter_Pro/StegHunter_Pro
+python -m pip install -e ".[linux-build]"
+bash packaging/linux/build.sh
 ```
 
-This creates a Linux-specific folder bundle. Create the final Linux installer or portable package from that bundle using the chosen Linux packaging format; the Windows Inno Setup installer cannot package a Linux executable.
+The `.deb` installs StegHunter Pro under `/opt/steg-hunter-pro` and adds it to the desktop application menu. The portable archive contains the standalone app folder; launch `StegHunter_Pro` inside it. Output files are written to `dist_linux/`. Linux desktop support uses the existing PySide6 app; the Windows Inno Setup installer remains Windows-only.
 
 ---
 

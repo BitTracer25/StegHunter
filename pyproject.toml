@@ -37,6 +37,7 @@ dependencies = [
 [project.optional-dependencies]
 web = ["streamlit>=1.30"]
 desktop = ["PySide6>=6.6", "torch>=2.0"]
+linux-build = ["PySide6>=6.6", "torch>=2.0", "pyinstaller>=6.0"]
 training = ["pandas>=2.0", "torch>=2.0"]
 dev = [
     "pytest>=7.0.0",
