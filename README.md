@@ -1,7 +1,5 @@
 # 🕵️‍♂️ StegHunter Pro: AI-Powered Steganalysis Suite
 
-# 🕵️‍♂️ StegHunter Pro: AI-Powered Steganalysis Suite
-
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red)
 ![GUI](https://img.shields.io/badge/GUI-PySide6%20%7C%20Streamlit-green)
