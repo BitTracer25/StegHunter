@@ -1,40 +1,96 @@
-# StegHunter Pro
+<div align="center">
 
-<<<<<<< HEAD
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red)
-![GUI](https://img.shields.io/badge/GUI-PySide6%20%7C%20Streamlit-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-=======
-StegHunter Pro is a desktop application for examining images for signs of hidden data. It combines two model scores with image checks and forensic details to help guide further investigation.
+# 🔎 StegHunter Pro
 
-## Download and install
->>>>>>> 07fac01 (Changes in README)
+### See what's hidden in plain sight.
 
-Download the installer for your operating system from the [latest GitHub release](https://github.com/BitTracer25/StegHunter/releases/latest).
+Inspect images for clues. Compare model scores. Explore pixel patterns and file details in one desktop app.
 
-- **Windows:** Download and run `StegHunter-Pro-Setup-2.0.0.exe`, then open StegHunter Pro from the Start Menu.
-- **Linux:** On Debian-based 64-bit distributions, including Kali, Ubuntu, and Debian, download and open `steg-hunter-pro_2.0.0_amd64.deb` with your software installer. After installation, open StegHunter Pro from the applications menu.
+[![Latest Release](https://img.shields.io/badge/release-v2.0.0-7357d5?style=for-the-badge)](https://github.com/BitTracer25/StegHunter/releases/latest)
+![Windows](https://img.shields.io/badge/Windows-x64-0078D4?style=for-the-badge)
+![Linux](https://img.shields.io/badge/Linux-Debian%20based-FCC624?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-2ea44f?style=for-the-badge)
 
-## What it does
+[Download StegHunter Pro](https://github.com/BitTracer25/StegHunter/releases/latest)
 
-- Analyzes PNG and JPEG images and displays Random Forest and CNN scores, along with their arithmetic mean.
-- Looks for simple least significant bit (LSB) text payloads.
-- Shows the image's least significant bit plane for visual inspection.
-- Displays available image metadata and checks for data appended after the file’s end marker.
-- Scans a folder of images and presents the results together.
-- Includes a tool for hiding UTF-8 text in PNG images.
+</div>
 
-## Using the app
+---
 
-Open an image to view its analysis, extracted LSB text, bit-plane preview, metadata, and trailing-data findings. Use **Batch Scan Folder** to analyze multiple images.
+## 🧭 Explore
 
-When hiding text, save the resulting image as PNG. JPEG compression can alter pixel values and damage LSB payloads.
+[Download & Install](#-download--install) · [What You Can Do](#-what-you-can-do) · [A Typical Review](#-a-typical-review) · [Understanding Scores](#-understanding-the-scores)
 
-## Understanding results
+## 📦 Download & install
 
-Scores are indicators for investigation. They are not calibrated probabilities and do not prove that an image does or does not contain hidden data. Steganography methods vary, and this tool will not detect every method. Review the other findings and the original image as part of your assessment.
+Get the installer for your system from the [latest release](https://github.com/BitTracer25/StegHunter/releases/latest).
 
-## License
+| Your system | Release file | Install it |
+| --- | --- | --- |
+| 🪟 **Windows 64-bit** | `StegHunter-Pro-Setup-2.0.0.exe` | Run the installer, then open StegHunter Pro from the Start Menu. |
+| 🐧 **Linux 64-bit** | `steg-hunter-pro_2.0.0_amd64.deb` | Open the package with your software installer, then launch the app from the applications menu. |
+
+The Linux `.deb` package is for Debian-based distributions, including Kali, Debian, and Ubuntu.
+
+## 🕵️ What you can do
+
+<table>
+<tr>
+<td width="50%">
+
+### 🧠 Compare model scores
+Review the Random Forest and CNN scores, with their arithmetic mean shown as a summary.
+
+</td>
+<td width="50%">
+
+### 🧩 Inspect LSB data
+Look for text hidden in supported RGB least significant bit (LSB) formats.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎨 Explore the bit plane
+View the image's least significant bit plane for visual patterns that may merit a closer look.
+
+</td>
+<td width="50%">
+
+### 🔬 Review file details
+Inspect available metadata and check for data appended after the image's end marker.
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+### 📂 Scan a folder
+Analyze multiple PNG and JPEG images and review their results together.
+
+</td>
+</tr>
+</table>
+
+## 🚀 A typical review
+
+1. **Open** a PNG or JPEG image.
+2. **Review** the model scores and any extracted LSB text.
+3. **Compare** the original image with its bit-plane view.
+4. **Check** metadata and trailing-data findings.
+5. **Batch scan** a folder to review a collection of images.
+
+## 🖼️ Image formats
+
+StegHunter can inspect PNG and JPEG images. PNG preserves pixel values; JPEG compression can change them and corrupt LSB data.
+
+## 📊 Understanding the scores
+
+Scores are clues for further investigation, not calibrated forensic probabilities. The displayed mean is the arithmetic average of the two model scores. Results depend on the image and the hiding method; a low score does not guarantee an image is clean.
+
+> **Keep context in view:** Steganography has many forms. StegHunter can help surface clues, but it cannot detect every method or prove that an image does or does not contain hidden data.
+
+## 📜 License
 
 StegHunter Pro is distributed under the MIT License.
