@@ -1,202 +1,40 @@
-# 🕵️‍♂️ StegHunter Pro: AI-Powered Steganalysis Suite
+# StegHunter Pro
 
+<<<<<<< HEAD
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red)
 ![GUI](https://img.shields.io/badge/GUI-PySide6%20%7C%20Streamlit-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+=======
+StegHunter Pro is a desktop application for examining images for signs of hidden data. It combines two model scores with image checks and forensic details to help guide further investigation.
 
-**StegHunter Pro** is a prototype for inspecting images for simple LSB payloads, statistical anomalies, metadata, and trailing file data. It reports separate Random Forest and CNN scores plus their arithmetic mean; these scores are not calibrated forensic probabilities.
+## Download and install
+>>>>>>> 07fac01 (Changes in README)
 
----
+Download the installer for your operating system from the [latest GitHub release](https://github.com/BitTracer25/StegHunter/releases/latest).
 
-## 📖 Table of Contents
+- **Windows:** Download and run `StegHunter-Pro-Setup-2.0.0.exe`, then open StegHunter Pro from the Start Menu.
+- **Linux:** On Debian-based 64-bit distributions, including Kali, Ubuntu, and Debian, download and open `steg-hunter-pro_2.0.0_amd64.deb` with your software installer. After installation, open StegHunter Pro from the applications menu.
 
-- [Problem Statement](#-problem-statement)
-- [Technical Architecture](#-technical-architecture)
-- [Detection Methodology](#-detection-methodology)
-- [Feature Breakdown](#-feature-breakdown)
-- [Installation & Setup](#-installation--setup)
-- [🚀 Detailed Usage Guide](#-detailed-usage-guide)
-- [Project Structure](#-project-structure)
-- [Performance & Accuracy](#-performance--accuracy)
-- [License](#-license)
+## What it does
 
----
+- Analyzes PNG and JPEG images and displays Random Forest and CNN scores, along with their arithmetic mean.
+- Looks for simple least significant bit (LSB) text payloads.
+- Shows the image's least significant bit plane for visual inspection.
+- Displays available image metadata and checks for data appended after the file’s end marker.
+- Scans a folder of images and presents the results together.
+- Includes a tool for hiding UTF-8 text in PNG images.
 
-## 🎯 Problem Statement
+## Using the app
 
-Steganography allows users to hide secret information within an innocuous cover image. Traditional detection methods (like simple LSB extraction) fail when:
+Open an image to view its analysis, extracted LSB text, bit-plane preview, metadata, and trailing-data findings. Use **Batch Scan Folder** to analyze multiple images.
 
-1. The payload is very small (low signal-to-noise ratio).
-2. The data is encrypted, making it look like random noise.
-3. Data is hidden in metadata or appended to the file end rather than the pixels.
+When hiding text, save the resulting image as PNG. JPEG compression can alter pixel values and damage LSB payloads.
 
-The current implementation combines Random Forest and CNN image scores with a simple LSB payload reader, metadata inspection, and trailing-data scan. These checks do not detect every steganography method.
+## Understanding results
 
----
+Scores are indicators for investigation. They are not calibrated probabilities and do not prove that an image does or does not contain hidden data. Steganography methods vary, and this tool will not detect every method. Review the other findings and the original image as part of your assessment.
 
-## ⚙️ Technical Architecture
+## License
 
-StegHunter is built on a **Modular Engine Architecture**. The core logic is decoupled from the user interfaces, allowing the same "Brain" to power three different front-ends:
-
-1. **The Core Engine (`stego/engine.py`):** Handles all mathematical computations, AI inference, and file parsing.
-2. **Pro Desktop App:** A high-performance PySide6 application for deep-dive forensics.
-3. **Lite Web App:** A Streamlit-based dashboard for rapid triage.
-4. **CLI Tool:** A lightweight interface for automation and scripting.
-
----
-
-## 🔬 Detection Methodology
-
-### 1. Statistical Analysis (The "First Pass")
-
-The tool calculates two primary metrics to identify anomalies:
-
-- **Chi-Square Analysis (χ²):** Measures the distribution of "Pairs of Values" (PoVs). In natural images, the frequency of pixel value 2n and 2n+1 is usually distinct. Steganography balances these, which the χ² test detects.
-- **LSB Entropy:** Calculates the Shannon Entropy of the least significant bits. Encrypted payloads increase the randomness (entropy) of the LSB plane.
-
-### 2. Convolutional Neural Network
-
-The CNN in `train_cnn.py` is trained on 128 × 128 RGB images and loaded from `stego_cnn.pth` during analysis. It runs alongside the Random Forest, which uses chi-square and LSB entropy features. The app reports each score and their arithmetic mean.
-
-- **Input:** 128 × 128 RGB Image Tensors.
-- **Layers:** 3 Convolutional layers with ReLU activation and Max-Pooling to extract spatial hierarchies.
-- **Output:** A Sigmoid activation function providing a probability score (0.0 to 1.0).
-
-### 3. LSB Payload Format
-
-`hide_data.py` writes UTF-8 text into RGB least significant bits with a `STGH` marker and a four-byte payload length. The reader also supports the previous null-terminated format. Use PNG output because JPEG compression can corrupt hidden bits.
-
----
-
-## ✨ Feature Breakdown
-
-| Feature | Description | Technology |
-| :--- | :--- | :--- |
-| **Model scores** | Separate Random Forest and CNN scores, plus their mean. | Scikit-Learn / PyTorch |
-| **LSB Extraction** | Recovers binary data hidden in the 0th bit of RGB channels. | NumPy / Pillow |
-| **Bit-Plane Slicing** | Visualizes the 0th bit plane to reveal artificial patterns. | NumPy / Pillow |
-| **Metadata Scan** | Extracts hidden strings from EXIF, XMP, and Image Info. | PIL.ExifTags |
-| **EOF Analysis** | Scans for trailing data after the binary end-marker. | Binary File I/O |
-| **Batch Processing** | Scans entire directories and flags suspect files. | PySide6 |
-
----
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-
-- **Python 3.10+** to run the source code on Windows or Linux. The desktop app runs natively on either operating system; a native Linux desktop does not need WSL or a separate GUI server.
-
-### Installation Steps
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/BitTracer25/StegHunter.git
-cd StegHunter
-
-# 2. Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-```
-
-### Run the desktop app natively on Linux
-
-Build and run the Linux version from a Linux desktop or Linux virtual machine. PyInstaller does not cross-compile between operating systems, and Linux builds depend on the target system's glibc, so build on the oldest Linux distribution you intend to support.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[desktop]"
-python desktop_app.py
-```
-
-### Build Linux desktop packages
-
-Build on a Linux desktop or VM. PyInstaller does not cross-compile, and the output depends on the Linux system libraries available on the build machine. The script creates a portable `.tar.gz` bundle and a Debian `.deb` installer (for Debian, Ubuntu, and compatible distributions):
-
-```bash
-python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
-python -m pip install -e ".[linux-build]"
-bash packaging/linux/build.sh
-```
-
-Install the CPU-only PyTorch wheel before the project extras so PyInstaller bundles the smaller CPU runtime; the CNN model remains enabled and runs inference on CPU. The build script stops if it detects CUDA-enabled PyTorch. This can greatly reduce package size, though the exact result varies with Python, PyTorch, and PyInstaller versions and must be checked after building against your 700 MB target. The `.deb` installs StegHunter Pro under `/opt/steg-hunter-pro` and adds it to the desktop application menu. The portable archive contains the standalone app folder; launch `StegHunter_Pro` inside it. Output files are written to `dist_linux/`. Linux desktop support uses the existing PySide6 app; the Windows Inno Setup installer remains Windows-only.
-
----
-
-## 🚀 Detailed Usage Guide
-
-StegHunter provides three ways to interact with the engine depending on your needs:
-
-### 🖥️ 1. Pro Desktop Application (Full Forensic Suite)
-
-Designed for professional investigators who need visual proof and batch capabilities.
-
-- **Launch:** `python3 desktop_app.py`
-- **Workflow:**
-  1. Click **"Open Image"** to select a target file.
-  2. **AI Analysis Tab:** View the statistical score and the extracted LSB text.
-  3. **Visual Proof Tab:** Compare the original image with the **0th Bit-Plane Slice**. Patterns or blocks of noise here indicate steganography.
-  4. **Forensics Tab:** Review the detailed Metadata and EOF analysis for hidden strings.
-  5. **Batch Scan:** Click **"Batch Scan Folder"** to analyze a whole directory. The tool will generate a table flagging all "Suspect" images.
-
-### 🌐 2. Lite Web Dashboard (Rapid Triage)
-
-Designed for quick checks and ease of use via a browser.
-
-- **Launch:** `streamlit run app.py`
-- **Workflow:**
-  1. Open the provided localhost URL in your browser.
-  2. **Drag and Drop** an image into the uploader.
-  3. Instantly view the **Stego Score** and the **LSB Extraction** preview.
-
-### ⌨️ 3. Command Line Interface (Automation)
-
-Designed for power users, developers, and automated pipelines.
-
-- **Usage:** `python3 main.py <image_path>`
-- **Workflow:**
-  1. Provide the path to the image as an argument.
-  2. The tool outputs the statistical score and a preview of any extracted LSB data directly to the terminal.
-
----
-
-## 📂 Project Structure
-
-```text
-StegHunter/
-├── stego/                   # Core Logic
-│   └── engine.py            # AI & Forensic Engine
-├── desktop_app.py           # PySide6 Professional GUI
-├── app.py                   # Streamlit Web App
-├── main.py                  # Command Line Interface
-├── train_cnn.py             # CNN Training Pipeline
-├── train_model.py           # Random Forest Training Pipeline
-├── generate_dataset.py      # Dataset Generator
-├── stego_model.pkl          # Pre-trained RF Model
-├── stego_cnn.pth            # Pre-trained CNN Model
-└── requirements.txt         # Project Dependencies
-```
-
----
-
-## 📈 Performance & Accuracy
-
-No verified accuracy figure is published. Training data is generated by `generate_dataset.py`; results depend on the seed images and payloads used. The training script keeps variants of the same seed image in a single split to reduce train/validation leakage.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
-Copyright (c) 2024 BitTracer.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+StegHunter Pro is distributed under the MIT License.
